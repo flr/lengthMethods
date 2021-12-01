@@ -167,7 +167,6 @@ res
 is a R package for simulation and estimation using life-history ratios and length composition data
 
 
-
 ```{r lbspr}
 library(LBSPR)
 ```
