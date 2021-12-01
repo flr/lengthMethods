@@ -20,13 +20,13 @@ license: Creative Commons Attribution-ShareAlike 4.0 International Public Licens
  
 ```{r, ini, echo=FALSE, results='hide', message=FALSE, warnings=FALSE, cache=FALSE,eval=!TRUE}
 library(knitr)
-source("R/ini.R")
+source("../R/ini.R")
 ```
 
 ```{r knitr_init, echo=FALSE, results="hide", eval=!FALSE}
 library(knitr)
 ## Global options
-opts_chunk$set(cache     =TRUE,
+opts_chunk$set(cache     =!TRUE,
                echo      =FALSE,
                eval      =TRUE,
                prompt    =FALSE,
@@ -153,7 +153,7 @@ prior=mydas:::popdyn(lh)
 ```
 
 ```{r, turbot-mlz}
-source('~/Desktop/flr/mydas/R/mlz.R')
+source('../R/mlz.R')
 
 res=mlz(mnLen[,ac(40:60)],prior)
 
@@ -203,7 +203,7 @@ library(popbio)
 #growth=vonB
 
 prior=popdyn(lh)
-source("/home/laurence-kell/Desktop/flr/mydas/R/lbspr.R")
+source("../R/lbspr.R")
 
 lb=lbspr(lfd,prior)  
 ```
