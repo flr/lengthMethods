@@ -36,8 +36,8 @@ opts_chunk$set(cache     =!TRUE,
                tidy      =TRUE,
                fig.height=6,
                fig.width =8,
-               fig.path  ="tex/simtest/len-",
-               cache.path="cache/simtest/len/")
+               fig.path  ="tex",
+               cache.path="cache")
 ```
 
 ```{r}
@@ -173,11 +173,12 @@ library(LBSPR)
 ```
 
 ```{r, turbot-alk}
-ak=mydas:::invAlk(lh)  
+source("../R/oemLn.R")
+ak=invAlk(lh)  
 ```
 
 ```{r, turbot-lfd}
-lfd=mydas:::lenSample(catch.n(om)[,20:65],ak,nsample=500)
+lfd=lenSample(catch.n(om)[,20:65],ak,nsample=500)
 ```
 
 
