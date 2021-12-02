@@ -182,8 +182,6 @@ lfd=lenSample(catch.n(om)[,20:65],ak,nsample=500)
 
 
 ```{r, turbot-oemplot}
-save(lfd,file="lfd.RData") 
-
 ggplot(melt(lfd[,seq(1,45,10)]))+
   geom_histogram(aes(len,weight=value),binwidth=1)+
   facet_grid(year~iter,scale="free")+
