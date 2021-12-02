@@ -159,10 +159,10 @@ quad=data.frame(x=c(40,80, 80, 40,  80,90,90,80, 90,105,105,90, 105,110,110,105,
 \newpage
 ## Length Frequencies
 ```{r}
-source('~/Desktop/sea++/mydas/pkg/R/oemLn.R')
+source('../R/oemLn.R')
 
 ## Matrix with P(len) by age for each set of params
-agLs=alk(par,cv=0.1)
+agLs=invAlk(par,cv=0.1)
 
 ## Simulate length frequencies by year
 lfd=lenSample(catch.n(om),iter(agLs,i),nsample=100)
@@ -182,25 +182,20 @@ ggplot(subset(lfd,year%in%c(60,100,120)&iter==1))+
   geom_vline(aes(xintercept=value,col=variable),data=melt(rln,id="year"))+
   facet_grid(year~.)+
   xlab("Length (cm)")+ylab("")+
-  scale_color_manual("Indicator",values=rainbow(4))
-
-save(lfd,file="/home/laurence/tmp/t.RloadData")   
+  scale_color_manual("Indicator",values=rainbow(8))
 ```
 
 **Figure `r iFig=iFig+1; iFig`.** Simulated length frequencies distributions with indicators.
 
-```{r}   
-save(lfd,refs,eq,par,file="/home/laurence/tmp/t.RData")    
-```
 
 ```{r}
-source('~/Desktop/sea++/mydas/pkg/R/oemLn.R')
+source('../R/oemLn.R')
 inds=ddply(lfd, .(year,iter), with, lenInd(len,data,lopt=c(refs["lopt"])))
 
 rf=FLQuants(  
   f    =window(fbar(eq)/c(refs["fmsy"]),start=41),
   lbar =as.FLQuant(transmute(inds,year=year,iter=iter,data=lbar))/c(par["l50"]),
-  lfm  =as.FLQuant(transmute(inds,year=year,iter=iter,data=lfm)),
+  #lfm  =as.FLQuant(transmute(inds,year=year,iter=iter,data=lfm)),
   pmega=as.FLQuant(transmute(inds,year=year,iter=iter,data=pmega)),
   l95  =as.FLQuant(transmute(inds,year=year,iter=iter,data=l95/c(par["linf"]))),
   l25  =as.FLQuant(transmute(inds,year=year,iter=iter,data=l25/c(par["linf"]))))
