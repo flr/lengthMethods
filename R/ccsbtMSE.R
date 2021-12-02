@@ -31,7 +31,7 @@ ms<-foreach(i=toRun,
          wt  =c(par["a"])*len^c(par["b"]),
          lopt=c(2/3*par["linf"]))
          
-         ind=ddply(indc, .(year,iter), with, lenInd(len,data,wt,lopt))
+         ind=ddply(ind, .(year,iter), with, lenInd(len,data,wt,lopt))
          ind=cbind(ind,linf=c(par["linf"]),l50=c(par["l50"]))
          lmean=as.FLQuant(transmute(ind,year=year,iter=iter,data=1.5*lmean/par["linf",drop=T]))
          
