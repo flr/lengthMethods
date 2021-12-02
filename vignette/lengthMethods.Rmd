@@ -176,6 +176,10 @@ source("../R/oemLn.R")
 ak=invAlk(lh)  
 ```
 
+```{r}
+save(ak,file="ak.RData")
+```
+
 ```{r, turbot-lfd}
 lfd=lenSample(catch.n(om)[,20:65],ak,nsample=500)
 ```
