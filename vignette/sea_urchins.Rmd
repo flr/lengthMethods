@@ -1,0 +1,178 @@
+---
+title: "test"
+author: "Pierucci"
+date: "1/12/2021"
+output: html_document
+---
+ i) Conduct a length-based assessment
+ ii) Set up an OM, 
+ iii) use an OEM to generate length data, 
+ iv) estimate empirical LBIs, 
+ v) simple model based estimates using FLR 
+ vi) wrappers for 3rd party methods
+ vii) evaluate robustness to uncertainty
+ 
+```{r, ini, echo=FALSE, results='hide', message=FALSE, warnings=FALSE, cache=FALSE,eval=!TRUE}
+library(knitr)
+source("C:/Users/andre/OneDrive/Desktop/ini.R")
+```
+
+```{r knitr_init, echo=FALSE, results="hide", eval=!FALSE}
+library(knitr)
+## Global options
+opts_chunk$set(cache     =!TRUE,
+               echo      =FALSE,
+               eval      =TRUE,
+               prompt    =FALSE,
+               comment   =NA,
+               message   =FALSE,
+               warning   =FALSE,
+               tidy      =TRUE,
+               fig.height=6,
+               fig.width =8,
+               fig.path  ="tex/simtest/len-",
+               cache.path="cache/simtest/len/")
+```
+
+```{r}
+options(digits=3)
+iFig=0
+```
+
+
+# Introduction
+
+This vignettel conducts an initial length based assessment for sea urchin, then sets up a simulation model to test data limited methods in `FLR` 
+
+## Required packages
+
+To follow this tutorial you should have installed the following packages:
+
+- FLR: [FLCore](http://www.flr-project.org/FLCore/), [FLBRP](http://www.flr-project.org/FLBRP/), [FLasher](http://www.flr-project.org/FLash/), [FLife](http://www.flr-project.org/FLife/)
+
+for example
+
+```{r, install, eval=FALSE}
+#install.packages(c("FLCore"),  repos="http://flr-project.org/R")
+#(c("FLBRP"),   repos="http://flr-project.org/R")
+#install.packages(c("FLasher"), repos="http://flr-project.org/R")
+#install.packages(c("FLife"),   repos="http://flr-project.org/R")
+```
+
+```{r, pkgs}
+# Load  packages
+library(ggplot2)
+library(plyr)
+library(reshape)
+library(FLCore)
+library(ggplotFL)
+library(FLBRP)
+library(FLasher)
+library(FLife)
+
+library(mydas)
+library(popbio)
+
+library(LBSPR)
+
+source("../R/lbspr.R")
+```
+
+
+# Length Based Methods
+
+Based on Beverton and Holt  $L_{F} = \frac{L\infty +\frac{F+M}{K}L_c}{1+\frac{F+M}{K}}$
+
++ $LBSPR$ Length-based spawning potential ratio (Hordyk et al. 2015) 
+
+
+## LB-SPR
+
+[LBSPR](https://cran.r-project.org/web/packages/LBSPR/vignettes/LBSPR.html)
+is a R package for simulation and estimation using life-history ratios and length composition data
+
+
+
+```{r lbspr}
+library(LBSPR)
+```
+
+```{r, urchin-alk}
+lh=FLPar(c(linf=130,  k=0.5, t0=-0.1, a=0.0003,b=3.000,a50=1.5353 , l50=66.5733 ),units="mm")
+
+ak=invAlk(lh)  
+```
+
+```{r, urchin-lfd}
+library(reshape)
+
+lfd=read.csv("../inputs/commercial_S.csv", row.names=NULL)
+
+names(lfd)=c("len",substr(names(lfd)[-1],2,5))
+
+lfd=as.FLQuant(with(melt(lfd,id="len"),data.frame(length=len,year=variable,data=value)))[,names(lfd)[-1]]
+
+ggplot(melt(lfd))+
+  geom_histogram(aes(length, weight=value),binwidth=1)+
+  facet_grid(year~iter,scale="free")+
+  xlab("Length (cm)")+ylab("Frequency")+
+  coord_cartesian(xlim=c(0,mean(lh["linf"])))
+```
+
+**Figure `r iFig=iFig+1; iFig`** Length data for urchin. 
+
+
+```{r, urchin-sa}
+library(ggplotFL)
+library(FLife)
+library(mydas)
+library(popbio)
+
+library(plyr)
+library(LBSPR)
+
+source("../R/lbspr.R")
+lh=FLPar(c(linf=130,  k=0.5, t0=-0.1, a=0.0003,b=3.000,a50=1.5353 , l50=66.5733 ),units="mm")
+
+prior=popdyn(lh)
+
+lb=lbspr(lfd,prior)  
+```
+
+
+```{r, urchin-plot}
+plot(lb)
+```
+
+**Figure `r iFig=iFig+1; iFig`** Estimates for urchin. 
+
+
+# Operating Model
+
+urchin
+
+```{r, urchin}
+lh=FLPar(c(linf= 130,  k=0.5, t0=-0.1, a=0.0003,b=3.000,a50=1.5353 , l50=66.5733 ),units="mm")
+lh=lhPar(lh)
+eq=lhEql(lh)
+gTime=5 #c(round(mydas:::gt(eq)))
+fbar(eq)=refpts(eq)["msy","harvest"]%*%FLQuant(c(rep(.1,19),
+                                              seq(.1,2,length.out=30)[-30],
+                                              seq(2,1.0,length.out=gTime)[-1],
+                                              rep(1.0,61)))[,1:105]
+om=as(eq,"FLStock")
+om=fwd(om,f=fbar(om)[,-1], sr=eq)
+
+```
+
+```{r urchin-ts-ref}
+plot(FLQuants(om, 
+          "f" =   function(x) fbar(x)%/%refpts(eq)["msy","harvest"], 
+          "ssb" = function(x) ssb(x)%/%refpts( eq)["msy","ssb"], 
+          "catch"=function(x) landings(x)%/%refpts(eq)["msy","yield"],
+          "rec" = function(x) rec(x)%/%refpts( eq)["msy","rec"])) + 
+  geom_hline(aes(yintercept=1),col="red",linetype=2)+
+  theme_bw() 
+```
+
+**Figure `r iFig=iFig+1; iFig`** Time series relative to MSY benchmarks.
