@@ -11,6 +11,8 @@ library(reshape)
 
 library(LBSPR)
 
+setwd("/home/laurence-kell/Desktop/flr/lengthMethods/tests")
+
 source("../R/oemLn.R")
 source("../R/lbspr.R")
 
@@ -43,3 +45,25 @@ ggplot(melt(lfd[,ac(seq(2011,2030,5))]))+
 lb=lbspr(lfd,priors)  
 
 plot(lb)
+
+
+## L-CC
+source('~/Desktop/flr/lengthMethods/R/haupt.R')
+
+
+z=haupt(lfd,priors,priors["sel1"]*0.9)
+
+## MLZ
+library(MLZ)
+
+eq=lhEql(par)
+om=as(eq,"FLStock")
+
+source('~/Desktop/flr/mydas/R/omOut.R')
+
+ts   =omSmry(om,eq,par)
+mnLen=as.FLQuant(with(ts,data.frame(data=cln,year=year,iter=iter)))
+
+source('~/Desktop/flr/mydas/R/mlz.R')
+
+res=mlz(mnLen[,ac(91)],priors)
