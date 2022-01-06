@@ -1,0 +1,41 @@
+Package: lengthMehods
+Title: 
+Description: 
+Version: 1.0.0
+Date: 2022-1-1
+Authors@R: c(
+	person(given = 'Iago', family = 'Mosqueira', role = c('aut', 'cre'),
+    email = 'iago.mosqueira@wur.nl'),
+  person(given = 'Finlay', family = 'Scott', role = c('aut'),
+    email = 'finlay.scott@ec.europa.eu'))
+Copyright: 
+Depends:
+  R(>= 3.5.0),
+  FLCore(> 2.6.5),
+  FLFishery(>= 0.1),
+  ggplotFL
+Imports:
+  methods,
+  ggplot2
+Additional_repositories: http://flr-project.org/R
+Suggests:
+  testthat,
+  knitr,
+  rmarkdown,
+Collate:
+  haupt.R
+  lbspr.R
+  lime.R
+  oemLn.R
+  powh.R
+  cc.R
+  ccsbtMSE.R
+  mlz.R
+License: 
+VignetteBuilder: knitr
+LazyData: No
+NeedsCompilation: Yes
+Biarch: FALSE  
+BugReports: https://github.com/flr/FLCore/issues
+RoxygenNote: 7.1.2
+Encoding: UTF-8

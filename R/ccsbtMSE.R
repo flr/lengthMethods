@@ -1,3 +1,4 @@
+if (FALSE){
 ms<-foreach(i=toRun, 
              .combine=list,
              .multicombine=TRUE,
@@ -42,4 +43,5 @@ ms<-foreach(i=toRun,
      
       save(iYr,om.lmean,file=paste("/home/laurence-kell/Desktop/papers/COM3/R/runs/om/om.lmean",i,"RData",sep="."))
     }
-
+           }
+}
