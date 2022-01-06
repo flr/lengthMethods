@@ -1,5 +1,6 @@
 ---
 title: "Life History Relationships"
+subtitle: "Operating Model"
 output:
 github_document:
   mathjax: TRUE
@@ -10,11 +11,18 @@ pdf_document:
 bibliography: bibliography.bib
 ---
 
+ i)   Set up an OM, 
+ ii)  OEM to abundance data, 
+ iii) OEM to generate length data, 
+ iv)  Length Based Indicators, 
+ vii) Evaluate robustness to uncertainty
 
 ```{r knitr_init, echo=FALSE, results="hide"}
 library(knitr)
 ## Global options
-opts_chunk$set(cache     =FALSE,
+opts_chunk$set(cache     =!FALSE,
+               fig.path  ="../tex/",
+               cache.path="../cache/",
                echo      =FALSE,
                eval      =TRUE,
                prompt    =FALSE,
@@ -132,7 +140,7 @@ Plotting is done using **ggplot2** which provides a powerful alternative paradig
 
 The **ggplot** methods expects a `data.frame` for its first argument, `data` (this has been overloaded by **ggplotFL** to also accept FLR objects); then a geometric object `geom` that specifies the actual marks put on to a plot and an aesthetic that is "something you can see" have to be provided. Examples of geometic Objects (geom) include points (geom_point, for scatter plots, dot plots, etc), lines (geom_line, for time series, trend lines, etc) and boxplot (geom_boxplot, for, well, boxplots!). Aesthetic mappings are set with the aes() function and, examples include, position (i.e., on the x and y axes), color ("outside" color), fill ("inside" color), shape (of points), linetype and size. 
 
-```{r, length, echo=TRUE, fig.cap="Von Bertalanffy growth curves."}
+```{r, length, echo=TRUE, fig.cap="Von Bertalanffy growth curves.", eval=FALSE}
 age=FLQuant(1:20,dimnames=list(age=1:20))
 len=vonB(age,teleost)
 
@@ -415,7 +423,7 @@ ggplot(FLQuants(eql,"m","catch.sel","mat","catch.wt"))+
 plot(eql)
 ```
 
-```{r}
+```{r, eval=FALSE}
 lhRef(par)
 ```
 
@@ -501,7 +509,7 @@ gg=gg+geom_point(aes(xvar,yvar),data=gg$data[130,],size=3)
 gg+theme(legend.position="none")
 ```
 
-```{r}
+```{r, eval=FALSE}
 #alb["t0"]=-alb["t0"]
 ## Beverton and Holt recruitment
 bh      =lhEql(alb,m=lorenzen)
@@ -684,7 +692,7 @@ ggplot(dat)+
   xlab("Time (year)")+ylab("Relative SSB")
 ```
 
-```{r spectAR, fig.width=8,fig.height=6}
+```{r spectAR, fig.width=8,fig.height=6, eval=FALSE}
 dat=ddply(dat,.(AR,Process,F), with, 
           as.data.frame(spectrum(data, log = "dB", ci = 0.8,plot=FALSE)[c("freq","spec")]))
 
@@ -696,7 +704,7 @@ ggplot(dat,aes(freq,val,col=AR))+
   theme(legend.position="bottom")
 ```
 
-```{r fig13, fig.width=10,fig.height=8,fig.cap="Cohort Effects"}
+```{r fig13, fig.width=10,fig.height=8,fig.cap="Cohort Effects", eval=FALSE}
 library(FLAssess)
 
 stk   =iter(stkm[,101:250],1)
@@ -736,7 +744,7 @@ hcrSBT1=function(cpue,tac,k1=1.5,k2=3,gamma=1,nyrs=5,lag=1,interval=3){
      return(res)}
 ```
 
-```{r fig14, fig.width=6,fig.height=8,fig.cap="MSE using empirical HCR"}
+```{r fig14, fig.width=6,fig.height=8,fig.cap="MSE using empirical HCR", eval=FALSE}
 par     =teleost[c("linf","k","t0","l50","a","b"),"Thunnus alalunga"]
 par     =lhPar(rbind(par,FLPar(m1=0.3,m2=-0.288)))
 eql     =lhEql(par,m=lorenzen)
@@ -830,7 +838,7 @@ Therefore plotting $\overline{L}-L^\prime$ against $L^\prime$ therefore provides
 
 Plotting $\overline{L}-L^\prime$ against $L^\prime$ provides an estimate of $L_{\infty}$ and Z/k, since $L_{\infty}=-a/b$ and $Z/k=\frac{-1-b}{b}$. If k is known then it also provides an estimate of Z (\textbf{Figure} \ref{fig:15}).
 
-```{r}
+```{r, eval=FALSE}
 data(ple4)
 ctc=as.data.frame(catch.n(ple4))
 dat=cc(age=ctc$age,n=ctc$data)
@@ -838,7 +846,7 @@ head(dat)
 ```
 
 
-```{r}
+```{r, eval=FALSE}
 data(cas)
 pw=ddply(subset(cas), .(year), 
    function(cas) powh(cas$len,cas$n)$data)
@@ -858,7 +866,7 @@ ggplot(pw)+
 ```
 
 ### Catch curve analysis
-```{r, echo=TRUE}
+```{r, echo=TRUE, eval=FALSE}
 data(ple4)
 ctc=as.data.frame(catch.n(ple4))
 ctc=ddply(ctc,.(year), with, cc(age=age,n=data))

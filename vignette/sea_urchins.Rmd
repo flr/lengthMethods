@@ -20,7 +20,7 @@ source("C:/Users/andre/OneDrive/Desktop/ini.R")
 ```{r knitr_init, echo=FALSE, results="hide", eval=!FALSE}
 library(knitr)
 ## Global options
-opts_chunk$set(cache     =!TRUE,
+opts_chunk$set(cache     =TRUE,
                echo      =FALSE,
                eval      =TRUE,
                prompt    =FALSE,
